@@ -23,5 +23,8 @@ util.a:	${LIB}
 	${AR} -r -c $@ ${LIB}
 	ranlib $@
 
+install: all
+	install -Dm 755 gzip ${DESTDIR}${BINDIR}
+
 clean:
 	rm -f gzip *.o ${LIB} util.a
