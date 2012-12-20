@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <utf.h>
 #include "../util.h"
 
 void venprintf (int c, const char *fmt, va_list ap) {

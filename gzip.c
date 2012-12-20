@@ -145,7 +145,7 @@ int main (int argc, char *argu[]) {
 				char *p;
 				ts[ii] = strdup (ss[ii]);
 				if (!ts[ii]) eprintf ("%s:", argu[0]);
-				p = utfrrune (ts[ii], '.');
+				p = strrchr (ts[ii], '.');
 				if (!p) eprintf ("%s: %s: no \".gz\" suffix\n", argu[0], ts[ii]);
 				p[0] = 0;
 			}
