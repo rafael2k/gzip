@@ -159,8 +159,10 @@ int main (int argc, char *argu[]) {
 
 	for (int ii = 1; ii < argc; ii++) {
 		int ifd, ofd;
+		struct stat st;
+		if (stat (ss[ii], &st) < 0) eprintf ("%s:", argu[0]);
 		ifd = open (ss[ii], O_RDONLY);
-		ofd = flags & cFlag ? 1 : open (ts[ii], O_WRONLY);
+		ofd = flags & cFlag ? 1 : open (ts[ii], O_WRONLY | O_CREAT, st.st_mode);
 		if (ifd < 0 || ofd < 0) eprintf ("%s:", argu[0]);
 		if (level == 0) ungz (ifd, ofd);
 		else gz (level, ifd, ofd);
