@@ -13,7 +13,6 @@
 #include <fcntl.h>
 #include <err.h>
 #include "miniz.h"
-#include "util.h"
 
 typedef struct {
 	int l;
@@ -63,6 +62,17 @@ retry:
 			errx (-1, "failed");
 		}
 	}
+}
+
+ssize_t readn (int fd, void *x, size_t n) {
+	int n0 = n;
+	while (n > 0) {
+		int m = read (fd, x, n);
+		if (m < 0) return m;
+		n -= m;
+		x = (uint8_t *)x + m;
+	}
+	return n0;
 }
 
 void skipString (int fd) {
