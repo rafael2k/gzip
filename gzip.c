@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <err.h>
 #include "miniz.h"
 #include "util.h"
 
@@ -25,8 +26,6 @@ enum {
 
 static int chunkSize = 1 << 20;
 
-char *selfName;
-
 St go (int level /* Zip level; 0 to mean unzip */, int ifd, int ofd) {
 	uint8_t x[chunkSize], y[chunkSize];
 	z_stream s;
@@ -35,13 +34,13 @@ St go (int level /* Zip level; 0 to mean unzip */, int ifd, int ofd) {
 	int windowBits = -MZ_DEFAULT_WINDOW_BITS;
 	if (level == 0 ? inflateInit2 (&s,                     windowBits)
 	               : deflateInit2 (&s, level, MZ_DEFLATED, windowBits, 6, MZ_DEFAULT_STRATEGY)) {
-		eprintf ("%s: failed\n", selfName);
+		errx (-1, "failed");
 	}
 	
 	for (;;) {
 		int n, fin = 0;
 		n = read (ifd, x + s.avail_in, chunkSize - s.avail_in);
-		if (n < 0) eprintf ("%s:", selfName);
+		if (n < 0) err (n, "failed to read");
 		s.next_in   = x;
 		s.next_out  = y;
 		s.avail_in += n;
@@ -59,9 +58,9 @@ retry:
 		case MZ_BUF_ERROR:
 			continue;
 		case MZ_DATA_ERROR:
-			eprintf ("%s: not flated data\n", selfName);
+			errx (-1, "not flated data");
 		case MZ_PARAM_ERROR:
-			eprintf ("%s: failed\n", selfName);
+			errx (-1, "failed");
 		}
 	}
 }
@@ -76,10 +75,10 @@ void ungz (int ifd, int ofd) {
 	switch (readn (ifd, x, 10)) {
 	case  0: return;
 	case 10: break;
-	default: eprintf ("%s: not in gz format\n", selfName);
+	default: errx (-1, "not in gz format");
 	}
-	if (x[0] != 0x1F || x[1] != 0x8B) eprintf ("%s: not in gz format\n", selfName);
-	if (x[2] != 8) eprintf ("%s: unknown z-algorithm: 0x%0hhX\n", selfName, x[2]);
+	if (x[0] != 0x1F || x[1] != 0x8B) errx (-1, "not in gz format");
+	if (x[2] != 8) errx (-1, "unknown z-algorithm: 0x%0hhX", x[2]);
 	if (x[3] & 1 << 2) /* FEXTRA */ {
 		uint16_t n;
 		uint8_t n_[2], _[1];
@@ -150,14 +149,14 @@ int main (int argc, char *argu[]) {
 	ss = argu;
 	if (!flags & cFlag) {
 		ts = malloc (sizeof (char *)*(argc - 1));
-		if (!ts) eprintf ("%s:", argu[0]);
+		if (!ts) err (-1, "failed to allocate memory");
 		for (int ii = 1; ii < argc; ii++) {
 			if (level == 0) {
 				char *p;
 				ts[ii] = strdup (ss[ii]);
-				if (!ts[ii]) eprintf ("%s:", argu[0]);
+				if (!ts[ii]) err (-1, "failed to allocate memory");
 				p = strrchr (ts[ii], '.');
-				if (!p) eprintf ("%s: %s: no \".gz\" suffix\n", argu[0], ts[ii]);
+				if (!p) errx (-1, "%s: no \".gz\" suffix", ts[ii]);
 				p[0] = 0;
 			}
 			else {
@@ -171,10 +170,10 @@ int main (int argc, char *argu[]) {
 	for (int ii = 1; ii < argc; ii++) {
 		int ifd, ofd;
 		struct stat st;
-		if (stat (ss[ii], &st) < 0) eprintf ("%s:", argu[0]);
+		if (stat (ss[ii], &st) < 0) err (-1, "failed to stat %s:", ss[ii]);
 		ifd = open (ss[ii], O_RDONLY);
 		ofd = flags & cFlag ? 1 : open (ts[ii], O_WRONLY | O_CREAT, st.st_mode);
-		if (ifd < 0 || ofd < 0) eprintf ("%s:", argu[0]);
+		if (ifd < 0 || ofd < 0) err (-1, "failed to open");
 		if (level == 0) ungz (ifd, ofd);
 		else gz (level, ifd, ofd);
 	}
