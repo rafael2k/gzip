@@ -121,21 +121,32 @@ void gz (int level, int ifd, int ofd) {
 }
 
 int main (int argc, char *argu[]) {
-	int level = 6; // zip level; 0 to mean unzip
-	int flags = 0;
+	int level = 6 /* zip level; 0 to mean unzip */, flags = 0, ii;
 	char **ss, **ts;
-#include "argPrae.c"
-	case 'c':
-		flags |= cFlag;
-		break;
-	case 'd':
-		level = 0;
-		break;
-	default:
-		if (argu[ii][jj] <= '9' && argu[ii][jj] >= '0') level = (int)(argu[ii][jj] - '0');
-		break;
-#include "argPost.c"
-	selfName = argu[0];
+
+	for (ii = 1; ii < argc; ii++) {
+		if (argu[ii][0] != '-' || argu[ii][1] == 0) break;
+		if (argu[ii][1] == '-' && argu[ii][2] == 0) {
+			ii++;
+			break;
+		}
+		for (int jj = 1; argu[ii][jj]; jj++) switch (argu[ii][jj]) {
+		case 'c':
+			flags |= cFlag;
+			break;
+		case 'd':
+			level = 0;
+			break;
+		default:
+			if (argu[ii][jj] <= '9' && argu[ii][jj] >= '0') level = (int)(argu[ii][jj] - '0');
+			break;
+		}
+	}
+
+	argu[--ii] = argu[0];
+	argc -= ii;
+	argu += ii;
+
 	ss = argu;
 	if (!flags & cFlag) {
 		ts = malloc (sizeof (char *)*(argc - 1));
