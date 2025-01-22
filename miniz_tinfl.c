@@ -28,11 +28,6 @@
 
 #ifndef MINIZ_NO_INFLATE_APIS
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
     /* ------------------- Low-level Decompression (completely independent from all compression API's) */
 
 #define TINFL_MEMCPY(d, s, l) memcpy(d, s, l)
@@ -767,10 +762,6 @@ extern "C"
     {
         MZ_FREE(pDecomp);
     }
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif /*#ifndef MINIZ_NO_INFLATE_APIS*/

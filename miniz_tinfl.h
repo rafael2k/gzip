@@ -4,10 +4,6 @@
 
 #ifndef MINIZ_NO_INFLATE_APIS
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
     /* Decompression flags used by tinfl_decompress(). */
     /* TINFL_FLAG_PARSE_ZLIB_HEADER: If set, the input has a valid zlib header and ends with an adler32 checksum (it's a valid zlib stream). Otherwise, the input is a raw deflate stream. */
     /* TINFL_FLAG_HAS_MORE_INPUT: If set, there are more input bytes available beyond the end of the supplied input buffer. If clear, the input buffer contains all remaining input. */
@@ -142,9 +138,5 @@ typedef mz_uint32 tinfl_bit_buf_t;
         mz_uint8 m_code_size_2[TINFL_MAX_HUFF_SYMBOLS_2];
         mz_uint8 m_raw_header[4], m_len_codes[TINFL_MAX_HUFF_SYMBOLS_0 + TINFL_MAX_HUFF_SYMBOLS_1 + 137];
     };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /*#ifndef MINIZ_NO_INFLATE_APIS*/

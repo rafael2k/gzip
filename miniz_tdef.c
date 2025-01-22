@@ -28,11 +28,6 @@
 
 #ifndef MINIZ_NO_DEFLATE_APIS
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
     /* ------------------- Low-level Compression (independent from all decompression API's) */
 
     /* Purposely making these tables static for faster init and thread safety. */
@@ -1588,10 +1583,6 @@ static MZ_FORCEINLINE void tdefl_find_match(tdefl_compressor *d, mz_uint lookahe
 
 #ifdef _MSC_VER
 #pragma warning(pop)
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif /*#ifndef MINIZ_NO_DEFLATE_APIS*/

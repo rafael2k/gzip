@@ -52,8 +52,7 @@ retry:
 		case MZ_OK:
 			write (ofd, y, chunkSize - s.avail_out);
 			s.avail_in = 0;
-			// .crc32 = s.adler is not correct, but it was not working also with older miniz lib
-			if (fin) return (St) { .l = level == 0 ? s.total_out : s.total_in, .crc32 = s.adler };
+			if (fin) return (St) { .l = level == 0 ? s.total_out : s.total_in};
 			break;
 		case MZ_BUF_ERROR:
 			continue;
@@ -112,6 +111,30 @@ void storLE32 (uint8_t *p, uint32_t n) {
 	p[3] = n >> 24;
 }
 
+#if 0
+static uint32_t crc32_gzip(const uint8_t *p, size_t len)
+{
+	uint32_t crc = ~0;
+	const uint32_t divisor = 0xEDB88320;
+
+	for (size_t i = 0; i < len * 8; i++) {
+		int bit;
+		uint32_t multiple;
+
+		bit = (p[i / 8] >> (i % 8)) & 1;
+		crc ^= bit;
+		if (crc & 1)
+			multiple = divisor;
+		else
+			multiple = 0;
+		crc >>= 1;
+		crc ^= multiple;
+	}
+
+	return ~crc;
+}
+#endif
+
 void gz (int level, int ifd, int ofd) {
 	uint8_t hdr[10] = {
 		0x1F, 0x8B,	/* magic */
@@ -125,6 +148,7 @@ void gz (int level, int ifd, int ofd) {
 	St st;
 	write (ofd, hdr, 10);
 	st = go (level, ifd, ofd);
+	st.crc32 = 0; // TODO
 	storLE32 (ftr + 0, st.crc32);
 	storLE32 (ftr + 4, st.l);
 	write (ofd, ftr, 8);

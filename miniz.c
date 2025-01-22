@@ -30,10 +30,6 @@ typedef unsigned char mz_validate_uint16[sizeof(mz_uint16) == 2 ? 1 : -1];
 typedef unsigned char mz_validate_uint32[sizeof(mz_uint32) == 4 ? 1 : -1];
 typedef unsigned char mz_validate_uint64[sizeof(mz_uint64) == 8 ? 1 : -1];
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
     /* ------------------- zlib-style API's */
 
@@ -66,7 +62,7 @@ extern "C"
     }
 
 /* Karl Malbrain's compact CRC-32. See "A compact CCITT crc16 and crc32 C implementation that balances processor cache usage against speed": http://www.geocities.com/malbrain/ */
-#if 0
+#if 1
     mz_ulong mz_crc32(mz_ulong crc, const mz_uint8 *ptr, size_t buf_len)
     {
         static const mz_uint32 s_crc32[16] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
@@ -613,10 +609,6 @@ mz_ulong mz_crc32(mz_ulong crc, const mz_uint8 *ptr, size_t buf_len)
     }
 
 #endif /*MINIZ_NO_ZLIB_APIS */
-
-#ifdef __cplusplus
-}
-#endif
 
 /*
   This is free and unencumbered software released into the public domain.
