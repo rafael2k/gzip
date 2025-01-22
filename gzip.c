@@ -52,7 +52,8 @@ retry:
 		case MZ_OK:
 			write (ofd, y, chunkSize - s.avail_out);
 			s.avail_in = 0;
-			if (fin) return (St) { .l = level == 0 ? s.total_out : s.total_in, .crc32 = s.crc32 };
+			// .crc32 = s.adler is not correct, but it was not working also with older miniz lib
+			if (fin) return (St) { .l = level == 0 ? s.total_out : s.total_in, .crc32 = s.adler };
 			break;
 		case MZ_BUF_ERROR:
 			continue;
@@ -147,7 +148,7 @@ int main (int argc, char *argu[]) {
 			level = 0;
 			break;
 		case 'h':
-			err (-1, "Usage: gzip [-d,-c,-L] input/output\n");
+			errx (-1, "Usage: gzip [-d,-c,-L] input/output\n");
 		default:
 			if (argu[ii][jj] <= '9' && argu[ii][jj] >= '0') level = (int)(argu[ii][jj] - '0');
 			break;

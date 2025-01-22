@@ -10,8 +10,8 @@ all:	gzip
 .c.o:
 	${CC} ${CFLAGS} -c -o $@ $<
 
-gzip: gzip.o miniz.o
-	${LD} ${LDFLAGS} -o $@ gzip.o miniz.o ${LDADD}
+gzip: gzip.o miniz.o miniz_tdef.o miniz_tinfl.o
+	${LD} ${LDFLAGS} -o $@ gzip.o miniz.o miniz_tdef.o miniz_tinfl.o ${LDADD}
 
 gzip.o: gzip.c miniz.c miniz.h config.mk
 	${CC} ${CFLAGS} -c -o $@ $<
