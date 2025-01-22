@@ -88,10 +88,10 @@
 
 #if MINIZ_X86_OR_X64_CPU
 // Set MINIZ_USE_UNALIGNED_LOADS_AND_STORES to 1 on CPU's that permit efficient integer loads and stores from unaligned addresses.
-#define MINIZ_USE_UNALIGNED_LOADS_AND_STORES 1
+#define MINIZ_USE_UNALIGNED_LOADS_AND_STORES 0
 #endif
 
-#define MINIZ_HAS_64BIT_REGISTERS 1
+#define MINIZ_HAS_64BIT_REGISTERS 0
 
 // ------------------- zlib-style API Definitions.
 

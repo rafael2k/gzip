@@ -146,6 +146,8 @@ int main (int argc, char *argu[]) {
 		case 'd':
 			level = 0;
 			break;
+		case 'h':
+			err (-1, "Usage: gzip [-d,-c,-L] input/output\n");
 		default:
 			if (argu[ii][jj] <= '9' && argu[ii][jj] >= '0') level = (int)(argu[ii][jj] - '0');
 			break;
